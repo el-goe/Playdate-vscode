@@ -211,6 +211,29 @@ build-device-release/
 
 This prevents the Simulator and device toolchains from interfering with each other.
 
+## Build toolchain
+
+The device build setup does not depend on a specific Visual Studio version.
+
+`vsdevcmd.cmd` uses Microsoft's `vswhere.exe` to automatically locate the latest installed Visual Studio installation that contains the required MSVC C++ toolchain.
+
+This can be:
+
+- Visual Studio
+- Visual Studio Build Tools
+
+The installed version does not need to be a specific release such as 2019 or 2022.
+
+The required Visual Studio component is:
+
+`Microsoft.VisualStudio.Component.VC.Tools.x86.x64`
+
+The script initializes the x64 MSVC environment by calling the detected installation's:
+
+`VC\Auxiliary\Build\vcvars64.bat`
+
+`vswhere.exe` is normally installed with Visual Studio or Visual Studio Build Tools.
+
 ## SDK configuration
 
 The Playdate SDK location is provided through:
@@ -250,7 +273,7 @@ The current CMake device task still contains the ARM toolchain path directly in 
 ## Requirements
 
 - Windows
-- Visual Studio 2022 with C++ tools
+- Visual Studio or Visual Studio Build Tools with the MSVC C++ toolchain
 - CMake
 - NMake
 - ARM GNU toolchain
