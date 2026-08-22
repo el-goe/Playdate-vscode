@@ -74,6 +74,70 @@ Contains the Simulator debugger configuration.
 
 Initializes the Visual Studio x64 development environment before running CMake/NMake commands.
 
+## VS Code Tasks
+
+The following tasks are available from **Terminal → Run Task**.
+
+### Device
+
+| Task | Description |
+|---|---|
+| `Playdate: Generate Device (Release)` | Generates the NMake device build files using the Playdate ARM toolchain. |
+| `Playdate: Build Device (Release)` | Builds the Playdate device version and generates the `<game>_DEVICE.pdx` package. |
+| `Playdate: Install Device` | Builds the device version and installs the resulting PDX to the connected Playdate. |
+| `Playdate: Run Device` | Builds, installs and runs the device version on the connected Playdate. |
+| `Playdate: Uninstall Device` | Removes the installed `<game>_DEVICE.pdx` from the Playdate. |
+
+### Simulator
+
+| Task | Description |
+|---|---|
+| `Playdate: Generate Visual Studio Project` | Generates the Visual Studio Simulator project. |
+| `Playdate: Build Simulator (Visual Studio)` | Builds the Simulator version using the generated Visual Studio project. |
+
+### Simulator debugging
+
+Press **F5** to run:
+
+`Playdate: Debug Simulator`
+
+This configuration:
+
+1. Builds the Simulator version using `Playdate: Build Simulator (Visual Studio)`.
+2. Launches `PlaydateSimulator.exe`.
+3. Opens the project's PDX.
+4. Starts the C++ debugger.
+
+## Task dependencies
+
+### Device
+
+`Playdate: Build Device (Release)`
+
+    └── Playdate: Generate Device (Release)
+
+`Playdate: Install Device`
+
+    └── Playdate: Build Device (Release)
+            └── Playdate: Generate Device (Release)
+
+`Playdate: Run Device`
+
+    └── Playdate: Install Device
+            └── Playdate: Build Device (Release)
+                    └── Playdate: Generate Device (Release)
+
+### Simulator
+
+`Playdate: Build Simulator (Visual Studio)`
+
+    └── Playdate: Generate Visual Studio Project
+
+`Playdate: Debug Simulator` (F5)
+
+    └── Playdate: Build Simulator (Visual Studio)
+            └── Playdate: Generate Visual Studio Project
+
 ## Device scripts
 
 ### `install-device.cmd`
@@ -113,89 +177,6 @@ The PDX directory is removed recursively using Windows `rmdir`.
 The script does not attempt to eject the Playdate automatically.
 
 After the PDX is removed, it asks the user to press **A** on the Playdate to leave Data Disk mode.
-
-## Device build
-
-### Generate Device
-
-**Playdate: Generate Device (Release)**
-
-Generates an NMake build in:
-
-```text
-build-device-release/
-```
-
-using the Playdate ARM toolchain.
-
-### Build Device
-
-**Playdate: Build Device (Release)**
-
-Builds the device target and generates:
-
-```text
-<game>_DEVICE.pdx
-```
-
-### Install Device
-
-**Playdate: Install Device**
-
-Builds the device version and installs the resulting PDX to the connected Playdate.
-
-### Run Device
-
-**Playdate: Run Device**
-
-Builds, installs and runs the device version.
-
-The task chain is:
-
-```text
-Build Device
-    ↓
-Install Device
-    ↓
-Run Device
-```
-
-## Simulator
-
-### Generate Visual Studio Project
-
-**Playdate: Generate Visual Studio Project**
-
-Generates a Visual Studio 2022 x64 project in:
-
-```text
-build-vs/
-```
-
-### Build Simulator
-
-**Playdate: Build Simulator (Visual Studio)**
-
-Builds the Simulator configuration using Visual Studio.
-
-### Debug Simulator
-
-**Playdate: Debug Simulator**
-
-The F5 debugger:
-
-1. Builds the Simulator version.
-2. Launches `PlaydateSimulator.exe`.
-3. Opens the project PDX.
-4. Starts the C++ debugger.
-
-The Simulator PDX is selected using:
-
-```text
-${config:playdate.gameName}
-```
-
-so the game name does not need to be duplicated in `launch.json`.
 
 ## Build directories
 
