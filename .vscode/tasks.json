@@ -1,0 +1,124 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Playdate: Generate Device (Release)",
+            "type": "process",
+            "command": "${workspaceFolder}\\.vscode\\vsdevcmd.cmd",
+            "args": [
+                "cmake.exe",
+                "-S",
+                "${workspaceFolder}",
+                "-B",
+                "${workspaceFolder}\\build-device-release",
+                "-G",
+                "NMake Makefiles",
+                "--toolchain",
+                "${env:PLAYDATE_SDK_PATH}\\C_API\\buildsupport\\arm.cmake",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+
+        {
+            "label": "Playdate: Build Device (Release)",
+            "type": "process",
+            "command": "${workspaceFolder}\\.vscode\\vsdevcmd.cmd",
+            "args": [
+                "nmake.exe",
+                "/f",
+                "${workspaceFolder}\\build-device-release\\Makefile"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}\\build-device-release"
+            },
+            "dependsOn": "Playdate: Generate Device (Release)",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+
+        {
+            "label": "Playdate: Generate Visual Studio Project",
+            "type": "process",
+            "command": "cmake.exe",
+            "args": [
+                "-S",
+                "${workspaceFolder}",
+                "-B",
+                "${workspaceFolder}\\build-vs",
+                "-G",
+                "Visual Studio 17 2022",
+                "-A",
+                "x64"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+
+        {
+            "label": "Playdate: Build Simulator (Visual Studio)",
+            "type": "process",
+            "command": "cmake.exe",
+            "args": [
+                "--build",
+                "${workspaceFolder}\\build-vs",
+                "--config",
+                "Debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Playdate: Generate Visual Studio Project",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+
+        {
+            "label": "Playdate: Install Device",
+            "type": "process",
+            "command": "${workspaceFolder}\\scripts\\install-device.cmd",
+            "args": [
+                "${config:playdate.gameName}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Playdate: Build Device (Release)",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+
+        {
+            "label": "Playdate: Run Device",
+            "type": "process",
+            "command": "${workspaceFolder}\\scripts\\run-device.cmd",
+            "args": [
+                "${config:playdate.gameName}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Playdate: Install Device",
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+
+        {
+            "label": "Playdate: Uninstall Device Game",
+            "type": "process",
+            "command": "${workspaceFolder}\\scripts\\uninstall-device.cmd",
+            "args": [
+                "${config:playdate.gameName}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

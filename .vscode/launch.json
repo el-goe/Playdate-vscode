@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Playdate: Debug Simulator",
+            "type": "cppvsdbg",
+            "request": "launch",
+
+            "program": "${env:PLAYDATE_SDK_PATH}\\bin\\PlaydateSimulator.exe",
+
+            "args": [
+                "${workspaceFolder}\\${config:playdate.gameName}.pdx"
+            ],
+
+            "cwd": "${env:PLAYDATE_SDK_PATH}\\bin",
+
+            "preLaunchTask": "Playdate: Build Simulator (Visual Studio)",
+
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}
